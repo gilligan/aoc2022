@@ -22,7 +22,7 @@ let
   };
   watch-tests = pkgs.writeScriptBin "watch-tests" ''
     ${pkgs.ghcid}/bin/ghcid --clear \
-    --command "cabal repl aoc:test:tests" \
+    --command "cabal repl aoc2022:test:tests" \
     --test "hspec spec" \
     --setup "import Test.Hspec" \
     --restart=./src --restart=./test
