@@ -18,8 +18,15 @@ common common-options
 
 library
   import:          common-options
-  exposed-modules: AOC.Day1
-  build-depends:   base ^>=4.15.1.0
+  exposed-modules:
+    AOC.Day1
+    AOC.Util
+
+  build-depends:
+    , base      ^>=4.15.1.0
+    , text
+    , trifecta
+
   hs-source-dirs:  src
 
 test-suite tests
