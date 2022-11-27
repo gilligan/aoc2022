@@ -29,7 +29,20 @@ let
   '';
 in
 pkgs.mkShell {
-  buildInputs = with pkgs; [ niv nixpkgs-fmt ghc cabal-install ormolu hlint haskell-language-server pcre ghcid haskellPackages.cabal-fmt watch-tests ];
+  buildInputs = with pkgs; [
+    niv
+    nixpkgs-fmt
+    ghc
+    cabal-install
+    ormolu
+    hlint
+    haskell-language-server
+    pcre
+    ghcid
+    haskellPackages.cabal-fmt
+    haskellPackages.haskell-ci
+    watch-tests
+  ];
   shellHook = ''
     ${pre-commit-check}
   '';
