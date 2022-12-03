@@ -35,9 +35,13 @@ test-suite tests
   type:               exitcode-stdio-1.0
   hs-source-dirs:     test
   main-is:            Spec.hs
-  other-modules:      AOC.Day1Spec
+  other-modules:
+    AOC.Day1Spec
+    AOC.UtilSpec
+
   build-tool-depends: hspec-discover:hspec-discover
   build-depends:
     , aoc2022
     , base     ^>=4.15.1.0
     , hspec
+    , text
