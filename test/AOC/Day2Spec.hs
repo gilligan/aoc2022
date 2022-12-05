@@ -26,3 +26,14 @@ spec = do
       it "should solve my puzzle input correctly" $ do
         input <- readFile "./data/day2.txt"
         getScore input `shouldBe` 15691
+    describe "parseStrategicRPS" $ do
+      it "should parse all letters correctly" $ do
+        case traverse (parseString parseStrategicRPS mempty) (lines rpsSample) of
+          Success r -> r `shouldBe` [(Rock, Draw), (Paper, Lose), (Scissors, Win)]
+          Failure _ -> expectationFailure "should have parsed correctly"
+    describe "getStrategicScore" $ do
+      it "should solve the sample correctly" $ do
+        getStrategicScore rpsSample `shouldBe` 12
+      it "should parse my puzzle input correctly" $ do
+        input <- readFile "./data/day2.txt"
+        getStrategicScore input `shouldBe` 12989
