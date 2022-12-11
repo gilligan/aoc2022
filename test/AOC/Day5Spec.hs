@@ -57,3 +57,9 @@ spec = do
       it "yields the correct output for my puzzle input" $ do
         fileInput <- readFile "./data/day5.txt"
         part1 fileInput `shouldBe` "[F][Z][C][M][J][C][R][H][Z]"
+    describe "part2" $ do
+      it "yields the correct output for the sample input" $ do
+        part2 testInput `shouldBe` "[M][C][D]"
+      it "yields the correct output for my puzzle input" $ do
+        fileInput <- readFile "./data/day5.txt"
+        part2 fileInput `shouldBe` "[J][S][D][H][Q][M][Z][G][F]"

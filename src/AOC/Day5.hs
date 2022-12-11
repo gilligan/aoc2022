@@ -49,6 +49,15 @@ exec (Move c f t) s =
 execProgram :: [Instruction] -> Stacks -> Stacks
 execProgram is s = foldl (flip exec) s is
 
+exec' :: Instruction -> Stacks -> Stacks
+exec' (Move c f t) s =
+  let removed = take (fromIntegral c) $ s !! (fromIntegral f - 1)
+      s' = update (f - 1) (drop (fromInteger c)) s
+   in update (t - 1) (removed ++) s'
+
+execProgram' :: [Instruction] -> Stacks -> Stacks
+execProgram' is s = foldl (flip exec') s is
+
 parseInput :: String -> Maybe (Stacks, [Instruction])
 parseInput str =
   let ls = lines str
@@ -64,4 +73,11 @@ part1 str =
   let input = parseInput str
    in case input of
         Just (stacks, insts) -> concatMap head (execProgram insts stacks)
+        Nothing -> "error parsing input"
+
+part2 :: String -> String
+part2 str =
+  let input = parseInput str
+   in case input of
+        Just (stacks, insts) -> concatMap head (execProgram' insts stacks)
         Nothing -> "error parsing input"
