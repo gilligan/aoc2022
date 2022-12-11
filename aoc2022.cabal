@@ -24,6 +24,8 @@ library
     AOC.Day1
     AOC.Day2
     AOC.Day3
+    AOC.Day4
+    AOC.Day5
     AOC.Util
 
   build-depends:
@@ -42,6 +44,8 @@ test-suite tests
     AOC.Day1Spec
     AOC.Day2Spec
     AOC.Day3Spec
+    AOC.Day4Spec
+    AOC.Day5Spec
     AOC.UtilSpec
 
   build-tool-depends: hspec-discover:hspec-discover

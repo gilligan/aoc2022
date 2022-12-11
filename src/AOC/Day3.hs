@@ -1,5 +1,6 @@
 module AOC.Day3 where
 
+import AOC.Util (chunksOf)
 import Data.Bits (shiftR)
 import Data.Char (isAsciiLower, ord)
 
@@ -29,12 +30,6 @@ getPrioSum s = fmap sum . getPrios <$> lines $ s
 --
 -- part 2
 --
-
-chunksOf :: Int -> [a] -> [[a]]
-chunksOf n xs
-  | n <= 0 = error "invalid split size"
-  | null xs = []
-  | otherwise = take n xs : chunksOf n (drop n xs)
 
 findTripleDup :: [String] -> Maybe Char
 findTripleDup xs =
