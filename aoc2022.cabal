@@ -27,6 +27,7 @@ library
     AOC.Day4
     AOC.Day5
     AOC.Day6
+    AOC.Day7
     AOC.Util
 
   build-depends:
