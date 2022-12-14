@@ -14,6 +14,19 @@ type FileTree = FS Int
 
 type Path = [String]
 
+data TermOutput
+  = -- | "cd <dir>"
+    TermCd String
+  | -- | "cd .."
+    TermUp
+  | -- | - "ls"
+    TermLs
+  | -- | <size> <fileName>
+    TermFile Integer String
+  | -- | dir <fileName>
+    TermDir String
+  deriving (Show, Eq)
+
 mkdir :: Path -> FileTree -> FileTree
 mkdir _ (File n s) = File n s
 mkdir [] fs = fs
@@ -35,41 +48,6 @@ touch _ x = x
 getDirSizes :: FileTree -> [(String, Int)]
 getDirSizes (Dir n entries) = (n, sum $ sum <$> entries) : concatMap getDirSizes entries
 getDirSizes (File _ _) = []
-
-sampleTree :: FileTree
-sampleTree =
-  Dir
-    "/"
-    [ Dir
-        "a"
-        [ Dir "e" [File "i" 584],
-          File "f" 29116,
-          File "g" 2557,
-          File "h.lst" 62596
-        ],
-      File "b.txt" 14848514,
-      File "c.dat" 8504156,
-      Dir
-        "d"
-        [ File "j" 4060174,
-          File "d.log" 8033020,
-          File "d.ext" 5626152,
-          File "k" 7214296
-        ]
-    ]
-
-data TermOutput
-  = -- | "cd <dir>"
-    TermCd String
-  | -- | "cd .."
-    TermUp
-  | -- | - "ls"
-    TermLs
-  | -- | <size> <fileName>
-    TermFile Integer String
-  | -- | dir <fileName>
-    TermDir String
-  deriving (Show, Eq)
 
 parseTermOutput :: Parser TermOutput
 parseTermOutput = try parseUp <|> try parseCd <|> try parseLs <|> parseFile <|> parseDir
@@ -108,42 +86,25 @@ processTerm = go [] (Dir "/" [])
       TermDir name -> go path (mkdir (path ++ [name]) fs) ops
     go _ fs [] = fs
 
-sampleTerminal :: String
-sampleTerminal =
-  unlines
-    [ "$ cd /",
-      "$ ls",
-      "dir a",
-      "14848514 b.txt",
-      "8504156 c.dat",
-      "dir d",
-      "$ cd a",
-      "$ ls",
-      "dir e",
-      "29116 f",
-      "2557 g",
-      "62596 h.lst",
-      "$ cd e",
-      "$ ls",
-      "584 i",
-      "$ cd ..",
-      "$ cd ..",
-      "$ cd d",
-      "$ ls",
-      "4060174 j",
-      "8033020 d.log",
-      "5626152 d.ext",
-      "7214296 k"
-    ]
-
-getSum :: FileTree -> Int
-getSum fs =
+getFileSum :: FileTree -> Int
+getFileSum fs =
   let pickDirs (name, size) = name /= "/" && size <= 100000
       dirSizes = filter pickDirs $ getDirSizes fs
    in sum $ fmap snd dirSizes
 
+findDirSizeToDelete :: [(String, Int)] -> Int
+findDirSizeToDelete dirs =
+  let spaceUsed = snd . head $ dirs
+      spaceAvailable = 70000000 - spaceUsed
+      spaceNeeded = 30000000 - spaceAvailable
+   in minimum (filter (>= spaceNeeded) $ snd <$> dirs)
+
 part1 :: String -> Int
 part1 str = case traverse (parseString parseTermOutput mempty) (lines str) of
-  Success ops -> getSum $ processTerm ops
+  Success ops -> getFileSum $ processTerm ops
   Failure x -> error $ show x
-    where
+
+part2 :: String -> Int
+part2 str = case traverse (parseString parseTermOutput mempty) (lines str) of
+  Success ops -> findDirSizeToDelete $ getDirSizes $ processTerm ops
+  Failure x -> error $ show x

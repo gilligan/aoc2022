@@ -109,4 +109,10 @@ spec = do
         part1 testTerminalOutput `shouldBe` 95437
       it "should solve my puzzle input correctly" $ do
         puzzleInput <- readFile "./data/day7.txt"
-        part1 puzzleInput `shouldBe` 0
+        part1 puzzleInput `shouldBe` 1513699
+    describe "part 2" $ do
+      it "should solve the example correctly" $ do
+        part2 testTerminalOutput `shouldBe` 24933642
+      it "should solve my puzzle input correctly" $ do
+        puzzleInput <- readFile "./data/day7.txt"
+        part2 puzzleInput `shouldBe` 7991939
