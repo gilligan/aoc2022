@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveTraversable #-}
-{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 module AOC.Day7 where
 
@@ -27,23 +26,19 @@ data TermOutput
     TermDir String
   deriving (Show, Eq)
 
+insert :: Path -> FileTree -> FileTree -> FileTree
+insert _ _ (File n s) = File n s
+insert [] _ fs = fs
+insert (p : ps) x (Dir name entries)
+  | p == name && (length ps == 1) = Dir name (entries ++ [x])
+  | p == name && (length ps > 1) = Dir name (insert ps x <$> entries)
+insert _ _ x = x
+
 mkdir :: Path -> FileTree -> FileTree
-mkdir _ (File n s) = File n s
-mkdir [] fs = fs
-mkdir (p : ps) d@(Dir name entries)
-  | p == name && (length ps == 1) = Dir name (entries ++ [Dir (head ps) []])
-  | p == name && (length ps > 1) = Dir name (mkdir ps <$> entries)
-  | p /= name = d
-mkdir _ x = x
+mkdir p = insert p (Dir (last p) [])
 
 touch :: (Path, Int) -> FileTree -> FileTree
-touch _ (File n s) = File n s
-touch ([], _) fs = fs
-touch (p : ps, fileSize) d@(Dir name entries)
-  | p == name && (length ps == 1) = Dir name (entries ++ [File (head ps) fileSize])
-  | p == name && (length ps > 1) = Dir name (touch (ps, fileSize) <$> entries)
-  | p /= name = d
-touch _ x = x
+touch (p, s) = insert p (File (last p) s)
 
 getDirSizes :: FileTree -> [(String, Int)]
 getDirSizes (Dir n entries) = (n, sum $ sum <$> entries) : concatMap getDirSizes entries
@@ -52,17 +47,12 @@ getDirSizes (File _ _) = []
 parseTermOutput :: Parser TermOutput
 parseTermOutput = try parseUp <|> try parseCd <|> try parseLs <|> parseFile <|> parseDir
   where
-    parseUp = do
-      _ <- symbol "$"
-      _ <- symbol "cd"
-      _ <- symbol ".."
-      return TermUp
+    parseUp = symbol "$ cd .." $> TermUp
     parseCd = do
-      _ <- symbol "$"
-      _ <- symbol "cd"
+      _ <- symbol "$ cd"
       d <- some alphaNum <|> symbol "/"
       return $ TermCd d
-    parseLs = symbol "$" *> symbol "ls" $> TermLs
+    parseLs = symbol "$ ls" $> TermLs
     parseFile = do
       size <- integer
       whiteSpace

@@ -66,7 +66,7 @@ spec = do
         touch (["/", "b.text"], 100) fs `shouldBe` Dir "/" [Dir "a" [], File "b.text" 100]
     describe "parseTermOutput" $ do
       it "should parse the given sample" $ do
-        let parsed = traverse (parseString parseTermOutput mempty) (lines sampleTerminal)
+        let parsed = traverse (parseString parseTermOutput mempty) (lines testTerminalOutput)
         case parsed of
           Success res ->
             res
